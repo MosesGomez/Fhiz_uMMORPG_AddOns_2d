@@ -7,14 +7,18 @@
 // =======================================================================================
 
 using System;
-
 #if _MYSQL
 using MySql.Data;								// From MySql.Data.dll in Plugins folder
 using MySql.Data.MySqlClient;                   // From MySql.Data.dll in Plugins folder
 #elif _SQLITE
+using SQLite; // copied from Unity/Mono/lib/mono/2.0 to Plugins
 
-using Mono.Data.Sqlite; 						// copied from Unity/Mono/lib/mono/2.0 to Plugins
-
+class character_dailyrewards
+{
+    public string character { get; set; }
+    public int counter { get; set; }
+    public float resetTime { get; set; }
+}
 #endif
 
 // =======================================================================================
@@ -29,7 +33,6 @@ public partial class Database
     private void Connect_UCE_DailyRewards()
     {
 #if _MYSQL
-
 		ExecuteNonQueryMySql(@"CREATE TABLE IF NOT EXISTS character_dailyrewards (
 					`character` VARCHAR(32) NOT NULL,
 					counter INTEGER NOT NULL,
@@ -44,12 +47,12 @@ public partial class Database
               ) CHARACTER SET=utf8mb4");
 
 #elif _SQLITE
-        ExecuteNonQuery(@"CREATE TABLE IF NOT EXISTS character_lastonline (
+        connection.Execute(@"CREATE TABLE IF NOT EXISTS character_lastonline (
 					character TEXT NOT NULL,
 					lastOnline TEXT NOT NULL
 			)");
 
-        ExecuteNonQuery(@"CREATE TABLE IF NOT EXISTS character_dailyrewards (
+        connection.Execute(@"CREATE TABLE IF NOT EXISTS character_dailyrewards (
 					character TEXT NOT NULL,
 					counter INTEGER NOT NULL,
 					resetTime FLOAT NOT NULL
@@ -64,19 +67,21 @@ public partial class Database
     public void CharacterLoad_UCE_DailyRewards(Player player)
     {
 #if _MYSQL
-		var table = ExecuteReaderMySql("SELECT counter, resetTime FROM character_dailyrewards WHERE `character`=@name", new MySqlParameter("@name", player.name));
+		var table =
+ ExecuteReaderMySql("SELECT counter, resetTime FROM character_dailyrewards WHERE `character`=@name", new MySqlParameter("@name", player.name));
 		if (table.Count == 1) {
             var row = table[0];
-			player.dailyRewardCounter 	= (int)row[0];
-			player.dailyRewardReset		= (int)row[1];
+			player.dailyRewardCounter = (int)row[0];
+			player.dailyRewardReset = (int)row[1];
 		}
 #elif _SQLITE
-        var table = ExecuteReader("SELECT counter, resetTime FROM character_dailyrewards WHERE `character`=@name", new SqliteParameter("@name", player.name));
+        var table = connection.Query<character_dailyrewards>(
+            "SELECT counter, resetTime FROM character_dailyrewards WHERE `character`=?", player.name);
         if (table.Count == 1)
         {
             var row = table[0];
-            player.dailyRewardCounter = Convert.ToInt32((long)row[0]);
-            player.dailyRewardReset = (double)row[1];
+            player.dailyRewardCounter = row.counter;
+            player.dailyRewardReset = row.resetTime;
         }
 #endif
     }
@@ -119,16 +124,16 @@ public partial class Database
                     new MySqlParameter("@lastOnline", DateTime.UtcNow.ToString("s")),
                     new MySqlParameter("@character", player.name));
 #elif _SQLITE
-        ExecuteNonQuery("DELETE FROM character_lastonline WHERE `character`=@character", new SqliteParameter("@character", player.name));
-        ExecuteNonQuery("INSERT INTO character_lastonline VALUES (@character, @lastOnline)",
-                new SqliteParameter("@lastOnline", DateTime.UtcNow.ToString("s")),
-                new SqliteParameter("@character", player.name));
+        connection.Execute("DELETE FROM character_lastonline WHERE `character`= ?", player.name);
+        connection.Execute("INSERT INTO character_lastonline VALUES (?, ?)",
+            DateTime.UtcNow.ToString("s"), player.name);
 
-        ExecuteNonQuery("DELETE FROM character_dailyrewards WHERE `character`=@character", new SqliteParameter("@character", player.name));
-        ExecuteNonQuery("INSERT INTO character_dailyrewards VALUES (@character, @counter, @resetTime)",
-                new SqliteParameter("@character", player.name),
-                new SqliteParameter("@counter", player.dailyRewardCounter),
-                new SqliteParameter("@resetTime", timeSinceEpoch.TotalHours));
+        connection.Execute("DELETE FROM character_dailyrewards WHERE `character` = ?",
+            player.name);
+        connection.Execute("INSERT INTO character_dailyrewards VALUES (?, ?, ?)",
+            player.name,
+            player.dailyRewardCounter,
+            timeSinceEpoch.TotalHours);
 #endif
     }
 
@@ -138,19 +143,21 @@ public partial class Database
     public double UCE_DailyRewards_HoursPassed(Player player)
     {
 #if _MYSQL
-		var row = (string)ExecuteScalarMySql("SELECT lastOnline FROM character_lastonline WHERE  `character`=@name", new MySqlParameter("@name", player.name));
+		var row =
+ (string)ExecuteScalarMySql("SELECT lastOnline FROM character_lastonline WHERE  `character`=@name", new MySqlParameter("@name", player.name));
 		if (!string.IsNullOrWhiteSpace(row)) {
-			DateTime time 			= DateTime.Parse(row);
+			DateTime time = DateTime.Parse(row);
 			return (DateTime.UtcNow - time).TotalSeconds/3600;
 		}
 		return 0;
 #elif _SQLITE
-        var row = (string)ExecuteScalar("SELECT lastOnline FROM character_lastonline WHERE `character`=@name", new SqliteParameter("@name", player.name));
+        var row = connection.ExecuteScalar<string>("SELECT lastOnline FROM character_lastonline WHERE `character` = ?", player.name);
         if (!string.IsNullOrWhiteSpace(row))
         {
             DateTime time = DateTime.Parse(row);
             return (DateTime.UtcNow - time).TotalSeconds / 3600;
         }
+
         return 0;
 #endif
     }
