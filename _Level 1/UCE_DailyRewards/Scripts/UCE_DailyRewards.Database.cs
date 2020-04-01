@@ -11,7 +11,7 @@ using System;
 using MySql.Data;								// From MySql.Data.dll in Plugins folder
 using MySql.Data.MySqlClient;                   // From MySql.Data.dll in Plugins folder
 #elif _SQLITE
-using SQLite; // copied from Unity/Mono/lib/mono/2.0 to Plugins
+using SQLite;
 
 class character_dailyrewards
 {
