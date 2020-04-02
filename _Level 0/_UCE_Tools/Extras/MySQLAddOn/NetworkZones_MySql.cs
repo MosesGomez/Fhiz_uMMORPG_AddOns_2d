@@ -1,7 +1,0 @@
-/*
-
-	//
-	// DELETE THIS FILE
-	//
-
-*/
