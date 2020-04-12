@@ -12,9 +12,6 @@ using System;
 using MySql.Data;								// From MySql.Data.dll in Plugins folder
 using MySql.Data.MySqlClient;                   // From MySql.Data.dll in Plugins folder
 #elif _SQLITE
-
-using SQLite;
-
 class account_admin
 {
  public string account { get; set; }
