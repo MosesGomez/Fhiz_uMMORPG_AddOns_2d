@@ -8,7 +8,7 @@
 
 using UnityEngine;
 
-public abstract partial class ScriptableSkill : ScriptableObject
+public abstract partial class ScriptableSkill: ScriptableObjectNonAlloc
 {
     [Tooltip("This skill cannot be learned via the Skill Window, only via other means")]
     public bool unlearnable;

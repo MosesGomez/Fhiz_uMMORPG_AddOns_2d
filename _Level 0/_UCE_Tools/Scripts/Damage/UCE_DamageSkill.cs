@@ -18,6 +18,9 @@ public abstract partial class UCE_DamageSkill : ScriptableSkill
     [Tooltip("[Required] Base damage of the attack.")]
     public LinearInt damage = new LinearInt { baseValue = 1 };
 
+    [Tooltip("[Required] Base ninshu damage of the attack.")]
+    public LinearInt damageNinshu = new LinearInt { baseValue = 1 };
+
     [Tooltip("[Optional] Add Damage stat of caster to modify attack damage?")]
     public bool addCasterDamage;
 
@@ -255,6 +258,7 @@ public abstract partial class UCE_DamageSkill : ScriptableSkill
 
         effect.data.skillLevel = _skillLevel;
         effect.data.damage = damage.Get(_skillLevel);
+        effect.data.damageNinshu = damageNinshu.Get(_skillLevel);
         effect.data.addCasterDamage = addCasterDamage;
 
         effect.data.stunChance = stunChance.Get(_skillLevel);
@@ -481,6 +485,7 @@ public abstract partial class UCE_DamageSkill : ScriptableSkill
         StringBuilder tip = new StringBuilder(base.ToolTip(skillLevel, showRequirements));
 
         tip.Replace("{DAMAGE}", damage.Get(skillLevel).ToString());
+        tip.Replace("{DAMAGENINSHU}", damageNinshu.Get(skillLevel).ToString());
         tip.Replace("{STUNCHANCE}", Mathf.RoundToInt(stunChance.Get(skillLevel) * 100).ToString());
         tip.Replace("{STUNTIME}", minStunTime.Get(skillLevel).ToString("F1") + "-" + maxStunTime.Get(skillLevel).ToString("F1") + "s");
 
@@ -517,5 +522,3 @@ public abstract partial class UCE_DamageSkill : ScriptableSkill
 
     // -----------------------------------------------------------------------------------
 }
-
-// =======================================================================================

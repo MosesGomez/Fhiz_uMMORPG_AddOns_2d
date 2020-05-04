@@ -47,6 +47,8 @@ public class UCE_StatModifier
     public float bonusResistance;
     public float bonusAbsorbHealthFactor;
     public float bonusAbsorbManaFactor;
+    public int bonusDamageNinshu;
+    public int bonusDefenseNinshu;
 #endif
 
     // -----------------------------------------------------------------------------------
@@ -90,5 +92,3 @@ public class UCE_StatModifier
 
     // -----------------------------------------------------------------------------------
 }
-
-// =======================================================================================

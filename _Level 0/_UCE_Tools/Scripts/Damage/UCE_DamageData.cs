@@ -15,6 +15,7 @@ public partial class UCE_DamageData
     // ---------- Base Settings
     public int skillLevel = 1;
     public int damage = 0;
+    public int damageNinshu = 0;
     public bool addCasterDamage = false;
     public float speed = 0;
     public float distance = 0;

@@ -167,22 +167,22 @@ public partial class Entity
     // ever triggered at the "Entity". Same for Monster and Pet. So it always triggers on
     // the base class, not on the derived classes.
     // -----------------------------------------------------------------------------------
-    [DevExtMethods("DealDamageAt")]
-    private void DealDamageAt_UCE(Entity entity, int amount, float stunChance = 0, float stunTime = 0)
-    {
-        if (entity == null || amount <= 0 || !entity.isAlive) return;
-
-        entity.lastAggressor = this;
-
-        if (entity is Player)
-            Utils.InvokeMany(typeof(Player), entity, "OnDamageDealt_");
-
-        if (entity is Monster)
-            Utils.InvokeMany(typeof(Monster), entity, "OnDamageDealt_");
-
-        if (entity is Pet)
-            Utils.InvokeMany(typeof(Pet), entity, "OnDamageDealt_");
-    }
+    // [DevExtMethods("DealDamageAt")]
+    // private void DealDamageAt_UCE(Entity entity, int amount, float stunChance = 0, float stunTime = 0)
+    // {
+    //     if (entity == null || amount <= 0 || !entity.isAlive) return;
+    //
+    //     entity.lastAggressor = this;
+    //
+    //     if (entity is Player)
+    //         Utils.InvokeMany(typeof(Player), entity, "OnDamageDealt_");
+    //
+    //     if (entity is Monster)
+    //         Utils.InvokeMany(typeof(Monster), entity, "OnDamageDealt_");
+    //
+    //     if (entity is Pet)
+    //         Utils.InvokeMany(typeof(Pet), entity, "OnDamageDealt_");
+    // }
 
     // -----------------------------------------------------------------------------------
     // Update_UCE
