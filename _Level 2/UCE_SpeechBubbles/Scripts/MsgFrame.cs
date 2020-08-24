@@ -50,7 +50,7 @@ public partial class MsgFrame : MonoBehaviour
             frameText.text = msg;
             bubble.size = new Vector2(GetTextMeshWidth(frameText, msg) + additionalWitdh, bubble.size.y);
             bubble.gameObject.SetActive(true);
-
+            StopCoroutine("ShowMsgFrameSequence"); 
             StartCoroutine("ShowMsgFrameSequence");
             animator.SetBool("SHOW_MSG", true);
         }
