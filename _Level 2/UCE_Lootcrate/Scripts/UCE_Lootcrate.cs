@@ -8,6 +8,7 @@
 using Mirror;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #if _iMMOCHEST
 
@@ -19,7 +20,14 @@ public partial class UCE_Lootcrate : UCE_InteractableObject
     [Header("[-=-=-=- UCE LOOTCRATE [See Tooltips] -=-=-=-]")]
     public Animator animator;
     public ParticleSystem lootIndicator;
+    
+    [Header("[SINGLE PLAYER LOOT ]")]
+    public bool singleLoot = false;
+    
+    [Tooltip("[Optional] Id to identify the lootcrate in the database.")]
+    public int idLootcrate = 0;
 
+    
     [Tooltip("Base duration (in seconds) it takes to access (open)")]
     public float accessDuration;
 
@@ -77,6 +85,9 @@ public partial class UCE_Lootcrate : UCE_InteractableObject
 
     [Tooltip("[Optional] Message shown to the player when the access requirements are not met.")]
     public string lockedMessage;
+    
+    [Tooltip("[Optional] Message shown to the player when the lootcrate opened.")]
+    public string openedMessage;
 
     [Tooltip("[Optional] Shown while opening the lootcrate.")]
     public string accessLabel;

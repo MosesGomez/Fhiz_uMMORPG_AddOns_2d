@@ -5,6 +5,7 @@
 // * Public downloads website...........: https://www.indie-mmo.net
 // * Pledge on Patreon for VIP AddOns...: https://www.patreon.com/IndieMMO
 // =======================================================================================
+
 using Mirror;
 using UnityEngine;
 
@@ -41,21 +42,42 @@ public partial class Player
     protected void Cmd_UCE_checkLootcrateAccess(GameObject _UCE_selectedLootcrate)
     {
         UCE_selectedLootcrate = _UCE_selectedLootcrate.GetComponent<UCE_Lootcrate>();
-
+        
         if (UCE_LootcrateValidation())
         {
-            Target_UCE_startLootcrateAccess(connectionToClient);
-        }
-        else
-        {
-            if (UCE_selectedLootcrate != null && UCE_selectedLootcrate.checkInteractionRange(this) && UCE_selectedLootcrate.lockedMessage != "")
+            if (UCE_selectedLootcrate.singleLoot)
             {
-                UCE_ShowPrompt(UCE_selectedLootcrate.lockedMessage);
+                if (!Database.singleton.CheckLoot(account, UCE_selectedLootcrate.idLootcrate))
+                {
+                    Target_UCE_startLootcrateAccess(connectionToClient);
+                }
+                else
+                {
+                    BadAccess(true);
+                }
             }
             else
             {
-                agent.destination = this.collider.ClosestPointOnBounds(transform.position);
+                Target_UCE_startLootcrateAccess(connectionToClient);
             }
+        }
+        else
+        {
+            BadAccess();
+        }
+    }
+
+    private void BadAccess(bool opened = false)
+    {
+        if (UCE_selectedLootcrate != null && UCE_selectedLootcrate.checkInteractionRange(this) &&
+            UCE_selectedLootcrate.lockedMessage != "" && UCE_selectedLootcrate.openedMessage != "")
+        {
+            string message = opened ? UCE_selectedLootcrate.openedMessage : UCE_selectedLootcrate.lockedMessage;
+            UCE_ShowPrompt(message);
+        }
+        else
+        {
+            agent.destination = collider.ClosestPointOnBounds(transform.position);
         }
     }
 
@@ -81,8 +103,8 @@ public partial class Player
     public bool UCE_LootcrateValidation()
     {
         bool bValid = (UCE_selectedLootcrate != null &&
-            UCE_selectedLootcrate.checkInteractionRange(this) &&
-            UCE_selectedLootcrate.interactionRequirements.checkState(this));
+                       UCE_selectedLootcrate.checkInteractionRange(this) &&
+                       UCE_selectedLootcrate.interactionRequirements.checkState(this));
 
         if (!bValid)
             UCE_cancelLootcrate();
@@ -160,6 +182,10 @@ public partial class Player
 
         UCE_selectedLootcrate.OnLoot();
         UCE_selectedLootcrate.OnAccessed();
+        if (UCE_selectedLootcrate.singleLoot)
+        {
+            Database.singleton.RegisterLoot(account, UCE_selectedLootcrate.idLootcrate);
+        }
     }
 
     // -----------------------------------------------------------------------------------
@@ -171,7 +197,7 @@ public partial class Player
     {
         if (
             UCE_LootcrateValidation()
-            )
+        )
         {
             gold += UCE_selectedLootcrate.gold;
             UCE_selectedLootcrate.gold = 0;
@@ -187,7 +213,7 @@ public partial class Player
     {
         if (
             UCE_LootcrateValidation()
-            )
+        )
         {
             coins += UCE_selectedLootcrate.coins;
             UCE_selectedLootcrate.coins = 0;
