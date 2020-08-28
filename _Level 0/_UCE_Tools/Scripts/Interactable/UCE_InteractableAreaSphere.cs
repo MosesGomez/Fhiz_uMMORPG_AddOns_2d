@@ -40,7 +40,7 @@ public partial class UCE_InteractableAreaSphere : UCE_Interactable
     // @Client
     // -----------------------------------------------------------------------------------
     [ClientCallback]
-    private void OnTriggerEnter(Collider co)
+    private void OnTriggerEnter2D(Collider2D co)
     {
         Player player = co.GetComponentInParent<Player>();
 
@@ -62,7 +62,7 @@ public partial class UCE_InteractableAreaSphere : UCE_Interactable
     // @Client
     // -----------------------------------------------------------------------------------
     [ClientCallback]
-    private void OnTriggerExit(Collider co)
+    private void OnTriggerExit2D(Collider2D co)
     {
         Player player = co.GetComponentInParent<Player>();
 
