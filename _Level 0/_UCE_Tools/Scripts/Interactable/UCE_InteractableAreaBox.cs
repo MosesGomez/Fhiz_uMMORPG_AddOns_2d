@@ -5,6 +5,7 @@
 // * Public downloads website...........: https://www.indie-mmo.net
 // * Pledge on Patreon for VIP AddOns...: https://www.patreon.com/iMMOban
 // =======================================================================================
+
 using Mirror;
 using UnityEngine;
 
@@ -14,8 +15,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public partial class UCE_InteractableAreaBox : UCE_Interactable
 {
-    [Header("[EDITOR]")]
-    public Color gizmoColor = new Color(0, 1, 1, 0.25f);
+    [Header("[EDITOR]")] public Color gizmoColor = new Color(0, 1, 1, 0.25f);
     public Color gizmoWireColor = new Color(1, 1, 1, 0.8f);
 
     // -----------------------------------------------------------------------------------
@@ -40,13 +40,14 @@ public partial class UCE_InteractableAreaBox : UCE_Interactable
     // @Client
     // -----------------------------------------------------------------------------------
     [ClientCallback]
-    private void OnTriggerEnter(Collider co)
+    private void OnTriggerEnter2D(Collider2D co)
     {
         Player player = co.GetComponentInParent<Player>();
 
         if (player != null && player == Player.localPlayer)
         {
-            if ((!interactionRequirements.hasRequirements() && !interactionRequirements.hasCosts()) || automaticActivation)
+            if (!interactionRequirements.hasRequirements() && !interactionRequirements.hasCosts() ||
+                automaticActivation)
             {
                 ConfirmAccess();
             }
@@ -62,7 +63,7 @@ public partial class UCE_InteractableAreaBox : UCE_Interactable
     // @Client
     // -----------------------------------------------------------------------------------
     [ClientCallback]
-    private void OnTriggerExit(Collider co)
+    private void OnTriggerExit2D(Collider2D co)
     {
         Player player = co.GetComponentInParent<Player>();
 
@@ -82,7 +83,7 @@ public partial class UCE_InteractableAreaBox : UCE_Interactable
 
         // -- check for interaction Distance
         if (IsWorthUpdating())
-            this.GetComponentInChildren<SpriteRenderer>().enabled = UCE_Tools.UCE_CheckSelectionHandling(this.gameObject);
+            GetComponentInChildren<SpriteRenderer>().enabled = true;
     }
 
     // -----------------------------------------------------------------------------------
