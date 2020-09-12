@@ -1,0 +1,1 @@
+To avoid conflicts with some of the UCE addons you must add this file to the bartuq itemdrop2d folder.
