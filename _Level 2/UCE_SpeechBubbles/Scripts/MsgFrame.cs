@@ -75,7 +75,7 @@ public partial class MsgFrame : MonoBehaviour
         float width = 0;
         foreach (char symbol in mesh.text)
         {
-            CharacterInfo info;
+            UnityEngine.CharacterInfo info;
             if (mesh.font.GetCharacterInfo(symbol, out info, mesh.fontSize, mesh.fontStyle))
             {
                 width += info.advance;
